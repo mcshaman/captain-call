@@ -1,0 +1,8 @@
+{
+	"name": "cli-captain",
+	"bin": {
+		"captin": "./Captain.js"
+	},
+	"version": "1.0.0",
+	"main": "./Captain.js"
+}
