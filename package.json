@@ -1,8 +1,8 @@
 {
-	"name": "cli-captain",
+	"name": "captain-command",
 	"bin": {
-		"captin": "./Captain.js"
+		"captin": "./captain-command.js"
 	},
 	"version": "1.0.0",
-	"main": "./Captain.js"
+	"main": "./captain-command.js"
 }
