@@ -268,6 +268,17 @@ describe('resolving order functions', () => {
 		captainCommand.addConfigs(config).command('echo')
 		expect(fn).toHaveBeenCalled()
 	})
+	test('an order in a config function passes context as argument', () => {
+		const config = (pContext) => {
+			return {
+				type: 'order',
+				commandName: 'echo',
+				fn: () => {return pContext},
+			}
+		}
+		const captain = captainCommand.addConfigs(config)
+		expect(captain.command('echo')).toBe(captain)
+	})
 	test('an order in an array of config objects', () => {
 		const fn2 = jest.fn()
 		const config = [
@@ -318,14 +329,6 @@ describe('handling order functions', () => {
 		}
 		const captain = captainCommand.addConfigs(config)
 		expect(captain.command(['echo', 'hello', 'world'])).toEqual(['echo', 'hello', 'world'])
-	})
-	test('command function passes current context', () => {
-		const config = {
-			type: 'order',
-			fn(pCommand, pContext) {return pContext}
-		}
-		const captain = captainCommand.addConfigs(config)
-		expect(captain.command('echo')).toBe(captain)
 	})
 })
 

@@ -131,7 +131,7 @@ const captain = ((pDefaultConfig) => {
 					throw new Error('no default orders found')
 				}
 
-				const response = order(command, scopedObject)
+				const response = order(command)
 
 				const inspections = getInspections(commandName, config.inspections)
 				return inspections.reduce((pResponse, pInspection) => {
