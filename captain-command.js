@@ -11,7 +11,6 @@ function buildConfig(pConfigs, pContext) {
 	}, [])
 
 	const orders = {}
-	const inspections = []
 	for (const resolvedConfig of resolvedConfigs) {
 		const {type, fn} = resolvedConfig
 		if (typeof fn !== 'function') {
@@ -22,18 +21,11 @@ function buildConfig(pConfigs, pContext) {
 			const {commandName} = resolvedConfig
 			const key = commandName || DEFAULT_COMMAND_NAME
 			orders[key] = fn
-		} else if (type === 'inspection') {
-			const inspection = {fn}
-			const {commandSelector} = resolvedConfig
-			if (commandSelector) {
-				inspection.commandSelector = commandSelector
-			}
-			inspections.push(inspection)
 		} else {
 			throw new Error('invalid config type in config')
 		}
 	}
-	return {orders, inspections}
+	return orders
 }
 
 function getOrders(pCommandName, pOrders) {
@@ -42,24 +34,6 @@ function getOrders(pCommandName, pOrders) {
 		return command
 	}
 	return pOrders[DEFAULT_COMMAND_NAME]
-}
-
-function getInspections(pCommandName, pInspections) {
-	return pInspections.reduce((pReduced, pInspection) => {
-		const {commandSelector, fn} = pInspection
-		if (!commandSelector) {
-			pReduced.push(fn)
-		} else if (commandSelector instanceof RegExp) {
-			if (commandSelector.test(pCommandName)) {
-				pReduced.push(fn)
-			}
-		} else if (typeof commandSelector === 'string') {
-			if (commandSelector === pCommandName) {
-				pReduced.push(fn)
-			}
-		}
-		return pReduced
-	}, [])
 }
 
 function commandIsValid(pCommand) {
@@ -97,26 +71,6 @@ const captain = ((pDefaultConfig) => {
 				}
 				return captain([...pScopedConfigs, config])
 			},
-			addInspection(...pArgs) {
-				const [commandSelector, fn] = pArgs.length > 1 ? pArgs : [null, pArgs[0]]
-				const config = {
-					type: 'inspection',
-					fn
-				}
-
-				if (typeof fn !== 'function') {
-					throw new Error('addInspection fn argument not valid')
-				}
-
-				if (commandSelector) {
-					if (typeof commandSelector !== 'string' && !(commandSelector instanceof RegExp)) {
-						throw new Error('addInspection commandSelector argument not valid')
-					}
-
-					config.commandSelector = commandSelector
-				}
-				return captain([...pScopedConfigs, config])
-			},
 			command(pCommand) {
 				if (!commandIsValid(pCommand)) {
 					throw new Error('command called with invalid command argument')
@@ -125,18 +79,13 @@ const captain = ((pDefaultConfig) => {
 				const command = typeof pCommand === 'string' ? shellQuote.parse(pCommand) : pCommand
 				const commandName = command[0]
 
-				const config = buildConfig(pScopedConfigs, scopedObject)
-				const order = getOrders(commandName, config.orders)
+				const orders = buildConfig(pScopedConfigs, scopedObject)
+				const order = getOrders(commandName, orders)
 				if (!order) {
 					throw new Error('no default orders found')
 				}
 
-				const response = order(command)
-
-				const inspections = getInspections(commandName, config.inspections)
-				return inspections.reduce((pResponse, pInspection) => {
-					return pInspection(pResponse)
-				}, response)
+				return order(command)
 			},
 		}
 		return scopedObject
