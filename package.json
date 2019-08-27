@@ -4,5 +4,14 @@
 		"captin": "./captain-command.js"
 	},
 	"version": "1.0.0",
-	"main": "./captain-command.js"
+	"main": "./captain-command.js",
+	"scripts": {
+		"test": "jest"
+	},
+	"devDependencies": {
+		"jest": "^24.9.0"
+	},
+	"dependencies": {
+		"shell-quote": "^1.7.1"
+	}
 }
