@@ -73,33 +73,33 @@ describe('configuring using addConfigs', () => {
 	})
 
 	test('add an order with no command name', () => {
-		const config = {type: 'order', fn}
+		const config = {fn}
 		const captain = captainCommand.addConfigs(config)
 		expect(captain).toBeACloneOf(captainCommand)
 	})
 	
 	test('add an order with a comman name', () => {
-		const config = {type: 'order', commandName: 'echo', fn}
+		const config = {commandName: 'echo', fn}
 		const captain = captainCommand.addConfigs(config)
 		expect(captain).toBeACloneOf(captainCommand)
 	})
 
 	test('use a config object to add an order', () => {
-		const config = {type: 'order', commandName: 'echo', fn}
+		const config = {commandName: 'echo', fn}
 		const captain = captainCommand.addConfigs(config)
 		expect(captain).toBeACloneOf(captainCommand)
 	})
 
 	test('use a config function to add an order', () => {
-		const config = () => {return {type: 'order', commandName: 'echo', fn}}
+		const config = () => {return {commandName: 'echo', fn}}
 		const captain = captainCommand.addConfigs(config)
 		expect(captain).toBeACloneOf(captainCommand)
 	})
 
 	test('use an array of config objects to add multiple orders', () => {
 		const config = [
-			{type: 'order', commandName: 'echo', fn},
-			{type: 'order', commandName: 'pwd', fn}
+			{commandName: 'echo', fn},
+			{commandName: 'pwd', fn}
 		]
 		const captain = captainCommand.addConfigs(config)
 		expect(captain).toBeACloneOf(captainCommand)
@@ -107,8 +107,8 @@ describe('configuring using addConfigs', () => {
 
 	test('use array of config functions to add multiple orders', () => {
 		const config = [
-			() => {return {type: 'order', commandName: 'echo', fn}},
-			() => {return {type: 'order', commandName: 'pwd', fn}},
+			() => {return {commandName: 'echo', fn}},
+			() => {return {commandName: 'pwd', fn}},
 		]
 		const captain = captainCommand.addConfigs(config)
 		expect(captain).toBeACloneOf(captainCommand)
@@ -117,8 +117,8 @@ describe('configuring using addConfigs', () => {
 	test('use a function to add multiple orders', () => {
 		const config = () => {
 			return [
-				{type: 'order', commandName: 'echo', fn},
-				{type: 'order', commandName: 'pwd', fn}
+				{commandName: 'echo', fn},
+				{commandName: 'pwd', fn}
 			]
 		}
 		const captain = captainCommand.addConfigs(config)
@@ -149,12 +149,7 @@ describe('calling command without any configuration', () => {
 
 describe('resolving configs functions', () => {
 	test('a config with no fn property', () => {
-		const config = {type: 'order'}
-		const captain = () => {captainCommand.addConfigs(config).command('echo')}
-		expect(captain).toThrow()
-	})
-	test('a config with an invalid type property', () => {
-		const config = {type: 'invalid', fn: () => {}}
+		const config = {}
 		const captain = () => {captainCommand.addConfigs(config).command('echo')}
 		expect(captain).toThrow()
 	})
@@ -167,24 +162,23 @@ describe('resolving order functions', () => {
 	})
 
 	test('an order with no command name', () => {
-		const config = {type: 'order', fn}
+		const config = {fn}
 		captainCommand.addConfigs(config).command('echo')
 		expect(fn).toHaveBeenCalled()
 	})
 	test('an order in a config object', () => {
-		const config = {type: 'order', commandName: 'echo', fn}
+		const config = {commandName: 'echo', fn}
 		captainCommand.addConfigs(config).command('echo')
 		expect(fn).toHaveBeenCalled()
 	})
 	test('an order in a config function', () => {
-		const config = () => {return {type: 'order', commandName: 'echo', fn}}
+		const config = () => {return {commandName: 'echo', fn}}
 		captainCommand.addConfigs(config).command('echo')
 		expect(fn).toHaveBeenCalled()
 	})
 	test('an order in a config function passes context as argument', () => {
 		const config = (pContext) => {
 			return {
-				type: 'order',
 				commandName: 'echo',
 				fn: () => {return pContext},
 			}
@@ -195,8 +189,8 @@ describe('resolving order functions', () => {
 	test('an order in an array of config objects', () => {
 		const fn2 = jest.fn()
 		const config = [
-			{type: 'order', commandName: 'echo', fn},
-			{type: 'order', commandName: 'pwd', fn: fn2}
+			{commandName: 'echo', fn},
+			{commandName: 'pwd', fn: fn2}
 		]
 		captainCommand.addConfigs(config).command('echo')
 		expect(fn).toHaveBeenCalled()
@@ -205,8 +199,8 @@ describe('resolving order functions', () => {
 	test('an order in an array of config functions', () => {
 		const fn2 = jest.fn()
 		const config = [
-			() => {return {type: 'order', commandName: 'echo', fn}},
-			() => {return {type: 'order', commandName: 'pwd', fn: fn2}},
+			() => {return {commandName: 'echo', fn}},
+			() => {return {commandName: 'pwd', fn: fn2}},
 		]
 		captainCommand.addConfigs(config).command('echo')
 		expect(fn).toHaveBeenCalled()
@@ -216,8 +210,8 @@ describe('resolving order functions', () => {
 		const fn2 = jest.fn()
 		const config = () => {
 			return [
-				{type: 'order', commandName: 'echo', fn},
-				{type: 'order', commandName: 'pwd', fn: fn2}
+				{commandName: 'echo', fn},
+				{commandName: 'pwd', fn: fn2}
 			]
 		}
 		captainCommand.addConfigs(config).command('echo')
@@ -229,7 +223,6 @@ describe('resolving order functions', () => {
 describe('handling order functions', () => {
 	test('command as a string', () => {
 		const config = {
-			type: 'order',
 			fn(pCommand) {return pCommand}
 		}
 		const captain = captainCommand.addConfigs(config)
@@ -237,7 +230,6 @@ describe('handling order functions', () => {
 	})
 	test('command as an array', () => {
 		const config = {
-			type: 'order',
 			fn(pCommand) {return pCommand}
 		}
 		const captain = captainCommand.addConfigs(config)

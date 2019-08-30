@@ -12,18 +12,14 @@ function buildConfig(pConfigs, pContext) {
 
 	const orders = {}
 	for (const resolvedConfig of resolvedConfigs) {
-		const {type, fn} = resolvedConfig
+		const {fn} = resolvedConfig
 		if (typeof fn !== 'function') {
 			throw new Error('invalid fn property in config')
 		}
 
-		if (type === 'order') {
-			const {commandName} = resolvedConfig
-			const key = commandName || DEFAULT_COMMAND_NAME
-			orders[key] = fn
-		} else {
-			throw new Error('invalid config type in config')
-		}
+		const {commandName} = resolvedConfig
+		const key = commandName || DEFAULT_COMMAND_NAME
+		orders[key] = fn
 	}
 	return orders
 }
@@ -58,7 +54,6 @@ const captain = ((pDefaultConfig) => {
 				}
 
 				const config = {
-					type: 'order',
 					fn
 				}
 
