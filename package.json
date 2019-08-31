@@ -1,10 +1,10 @@
 {
-	"name": "captain-command",
+	"name": "captain-call",
 	"bin": {
-		"captin": "./captain-command.js"
+		"captin": "./captain-call.js"
 	},
 	"version": "1.0.0",
-	"main": "./captain-command.js",
+	"main": "./captain-call.js",
 	"scripts": {
 		"test": "jest"
 	},
