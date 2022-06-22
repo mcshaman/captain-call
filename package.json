@@ -12,6 +12,6 @@
 		"jest": "^24.9.0"
 	},
 	"dependencies": {
-		"shell-quote": "^1.7.1"
+		"shell-quote": "^1.7.3"
 	}
 }
